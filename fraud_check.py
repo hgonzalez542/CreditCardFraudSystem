@@ -1,4 +1,5 @@
 import requests
+#---------> XML import was neccessary for compiling issues to be fixed <---------
 import xml.etree.ElementTree as ET
 
 API_KEY = "2N1TLDRCZLYATDONGWYHHCGQMGKCVFHM"
@@ -17,7 +18,7 @@ data = {
     "bill_state": "FL",
     "bill_country": "US",
     "bill_zip_code": "33101",
-    "amount": "400.00",
+    "amount": "5625.00",
     "currency": "USD",
     "card_bin": "411111",
     "user_order_id": "test-order-001",  # Optional but helps track in dashboard
