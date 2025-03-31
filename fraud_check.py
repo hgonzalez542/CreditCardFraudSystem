@@ -18,10 +18,10 @@ data = {
     "bill_state": "FL",
     "bill_country": "US",
     "bill_zip_code": "33101",
-    "amount": "5625.00",
+    "amount": "305.00",
     "currency": "USD",
     "card_bin": "411111",
-    "user_order_id": "test-order-001",  # Optional but helps track in dashboard
+    "user_order_id": "test-order-001",  # Optional but helps track in dashboard ~ I wanted an indicator of the process working
     "user_order_memo": "Testing fraud check via API"
 }
 
@@ -43,11 +43,11 @@ try:
         print("Credits Remaining  :", root.findtext("fraudlabspro_credits"))
         print("Transaction ID     :", root.findtext("fraudlabspro_id"))
     else:
-        print("❌ Error Response:")
+        print("Error Response:")
         print(response.text)
 
 except requests.exceptions.RequestException as e:
-    print("❌ Network Error:", e)
+    print("Network Error:", e)
 except ET.ParseError as pe:
-    print("❌ XML Parsing Error:", pe)
+    print("XML Parsing Error:", pe)
     print("Raw Response:\n", response.text)
