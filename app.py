@@ -1,37 +1,80 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 import requests
+from flask_cors import CORS
 import xml.etree.ElementTree as ET
 
 app = Flask(__name__)
-CORS(app)  # Allows your React frontend to make requests
+CORS(app)
 
-API_KEY = "2N1TLDRCZLYATDONGWYHHCGQMGKCVFHM"
-API_URL = "https://api.fraudlabspro.com/v1/order/screen"
+API_KEY = "CCPZODXPPMEBZYDSS87VGVO9JSYNOMWX"
+FRAUDLABS_URL = "https://api.fraudlabspro.com/v1/order/screen"
 
-@app.route('/check-fraud', methods=['POST'])
+@app.route("/check-fraud", methods=["POST"])
 def check_fraud():
-    data = request.json
-    data['key'] = API_KEY
-    data['action'] = "CHECK"
-
     try:
-        response = requests.post(API_URL, data=data)
-        if response.status_code == 200:
-            root = ET.fromstring(response.text)
-            result = {
-                "score": root.findtext("fraudlabspro_score"),
-                "status": root.findtext("fraudlabspro_status"),
-                "recommendation": root.findtext("fraudlabspro_status_desc"),
-                "country_match": root.findtext("is_country_match"),
-                "high_risk_country": root.findtext("is_high_risk_country"),
-                "credits": root.findtext("fraudlabspro_credits")
-            }
-            return jsonify(result)
-        else:
-            return jsonify({"error": "FraudLabs Pro error", "response": response.text}), 400
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON body received"}), 400
 
-if __name__ == '__main__':
-    app.run(debug=True)
+        # Required fields
+        bill_email = data.get("bill_email")
+        amount = data.get("amount")
+
+        if not bill_email or not amount:
+            return jsonify({"error": "Missing required fields: bill_email and amount are required."}), 400
+
+        payload = {
+            "key": API_KEY,
+            "ip": data.get("ip") or "146.112.62.105",
+            "bill_email": bill_email,
+            "bill_name": data.get("bill_name", ""),
+            "bill_phone": data.get("bill_phone", ""),
+            "bill_address": data.get("bill_address", ""),
+            "bill_city": data.get("bill_city", ""),
+            "bill_state": data.get("bill_state", ""),
+            "bill_country": data.get("bill_country", ""),
+            "bill_zip_code": data.get("bill_zip_code", ""),
+            "amount": amount,
+            "currency": data.get("currency", "USD"),
+            "card_bin": data.get("card_bin", "")
+        }
+
+        print("Sending to FraudLabs Pro:", payload)
+
+        # Send GET request
+        response = requests.get(FRAUDLABS_URL, params=payload)
+        content_type = response.headers.get("Content-Type", "")
+
+        # Try parsing JSON
+        if "application/json" in content_type:
+            response_data = response.json()
+            print("JSON response:", response_data)
+            return jsonify(response_data), response.status_code
+
+        # Parse XML if needed
+        elif "application/xml" in content_type or "text/xml" in content_type:
+            print("Received XML response.")
+            root = ET.fromstring(response.text)
+            parsed_data = {child.tag: child.text for child in root}
+            print("Parsed XML response:", parsed_data)
+            return jsonify(parsed_data), response.status_code
+
+        # Fallback if unknown content
+        else:
+            print("Unexpected content type:", content_type)
+            return jsonify({
+                "error": "Unknown response format from FraudLabs Pro",
+                "raw_response": response.text
+            }), 500
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "Internal server error", "details": str(e)}), 500
+
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({"error": "Endpoint not found"}), 404
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
