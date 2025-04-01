@@ -53,10 +53,10 @@ def check_fraud():
 
         # Parse XML if needed
         elif "application/xml" in content_type or "text/xml" in content_type:
-            print("Received XML response.")
+            print("**Received XML response.**")
             root = ET.fromstring(response.text)
             parsed_data = {child.tag: child.text for child in root}
-            print("Parsed XML response:", parsed_data)
+            print("**Parsed XML response:**", parsed_data)
             return jsonify(parsed_data), response.status_code
 
         # Fallback if unknown content
