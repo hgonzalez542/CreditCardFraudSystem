@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./App.css";
 
+// Function includes the set parameters for the webpage itself
 function App() {
   const [form, setForm] = useState({
     ip: "",
@@ -26,6 +27,9 @@ function App() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // the function handles the submission of the form and sends the data to the server for processing
+  // It also handles the loading state and error messages
+  // and updates the result state with the response from the server
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -48,6 +52,9 @@ function App() {
     }
   };
 
+  // The function renders the form and the result of the fraud check
+  // It includes input fields for the user to enter their information
+  // and a button to submit the form
   return (
     <div className="app-container">
       <div className="form-container">
