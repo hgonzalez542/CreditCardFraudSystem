@@ -19,10 +19,12 @@ function App() {
     card_bin: ""
   });
 
+  // The useState hook is used to manage the state of the form, result, loading, and error message
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
+  // The handleChange function updates the form state when the user types in the input fields
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
