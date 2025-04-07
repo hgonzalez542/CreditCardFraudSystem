@@ -1,3 +1,4 @@
+# Code is written and maintained by Hector Gonzalez
 from flask import Flask, request, jsonify
 import requests
 from flask_cors import CORS
@@ -6,11 +7,15 @@ import xml.etree.ElementTree as ET
 app = Flask(__name__)
 CORS(app)
 
-API_KEY = "CCPZODXPPMEBZYDSS87VGVO9JSYNOMWX"
+#APi Key and URL for FraudLabs Pro
+API_KEY = "ZQTTQZZISHUTC9MGW0AJ7DOFFP2OVYDH"
 FRAUDLABS_URL = "https://api.fraudlabspro.com/v1/order/screen"
 
+# Set up the Flask app
+# Route for the main page
 @app.route("/check-fraud", methods=["POST"])
 def check_fraud():
+    # Validate the request method
     try:
         data = request.get_json()
         if not data:
@@ -22,10 +27,10 @@ def check_fraud():
 
         if not bill_email or not amount:
             return jsonify({"error": "Missing required fields: bill_email and amount are required."}), 400
-
+        # all the parameters that are going to be sent to the FraudLabs Pro API
         payload = {
             "key": API_KEY,
-            "ip": data.get("ip") or "146.112.62.105",
+            "ip": data.get("ip") or "146.112.62.105", # Default IP
             "bill_email": bill_email,
             "bill_name": data.get("bill_name", ""),
             "bill_phone": data.get("bill_phone", ""),
