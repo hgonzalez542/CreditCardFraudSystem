@@ -12,7 +12,7 @@ API_KEY = "ZQTTQZZISHUTC9MGW0AJ7DOFFP2OVYDH"
 FRAUDLABS_URL = "https://api.fraudlabspro.com/v1/order/screen"
 
 # Set up the Flask app
-# Route for the main page
+# Route for the main page   
 @app.route("/check-fraud", methods=["POST"])
 def check_fraud():
     # Validate the request method
