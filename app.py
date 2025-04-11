@@ -4,10 +4,13 @@ import requests
 from flask_cors import CORS
 import xml.etree.ElementTree as ET
 
+# Initialize Flask app and enable CORS
 app = Flask(__name__)
+
+# Enable CORS for all routes and origins
 CORS(app)
 
-#APi Key and URL for FraudLabs Pro
+#API Key and URL for FraudLabs Pro
 API_KEY = "ZQTTQZZISHUTC9MGW0AJ7DOFFP2OVYDH"
 FRAUDLABS_URL = "https://api.fraudlabspro.com/v1/order/screen"
 
